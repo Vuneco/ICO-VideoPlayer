@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sticky Video Player</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 0;
+      margin: 0;
+      height: 3000px; /* zum Scrollen */
+    }
+
+    .video-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      margin: 40px auto;
+    }
+
+    video {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+
+    .sticky-player {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 300px;
+      z-index: 9999;
+      border: 2px solid #00c17c;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
+      background: white;
+      display: none;
+      overflow: hidden;
+    }
+
+    .sticky-player video {
+      width: 100%;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 4px;
+      right: 8px;
+      background: #00c17c;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      font-size: 14px;
+      z-index: 10;
+    }
+
+    .logo-overlay {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 40px;
+      height: 40px;
+      z-index: 5;
+    }
+
+    .logo-overlay img {
+      width: 100%;
+      height: auto;
+      border-radius: 6px;
+    }
+
+    @media (max-width: 500px) {
+      .logo-overlay {
+        width: 26px;
+        height: 26px;
+        top: 6px;
+        right: 6px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="video-wrapper" id="mainVideo">
+    <div class="logo-overlay">
+      <img src="https://vuneco.com/logo.png" alt="VuneCoin Logo">
+    </div>
+    <video id="video" controls>
+      <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+      Your browser does not support HTML5 video.
+    </video>
+  </div>
+
+  <div class="sticky-player" id="sticky">
+    <button class="close-btn" onclick="closeSticky()">&times;</button>
+    <div class="logo-overlay">
+      <img src="https://vuneco.com/logo.png" alt="VuneCoin Logo">
+    </div>
+    <video id="stickyVideo" controls muted>
+      <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+    </video>
+  </div>
+
+  <script>
+    const mainVideo = document.getElementById('mainVideo');
+    const sticky = document.getElementById('sticky');
+    const stickyVideo = document.getElementById('stickyVideo');
+    const video = document.getElementById('video');
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting && !sticky.classList.contains('closed')) {
+          sticky.style.display = 'block';
+          if (video.currentTime > 0 && !video.paused) {
+            stickyVideo.currentTime = video.currentTime;
+            stickyVideo.play();
+          }
+        } else {
+          sticky.style.display = 'none';
+          stickyVideo.pause();
+        }
+      });
+    }, {
+      threshold: 0.2
+    });
+
+    observer.observe(mainVideo);
+
+    function closeSticky() {
+      sticky.classList.add('closed');
+      sticky.style.display = 'none';
+      stickyVideo.pause();
+    }
+  </script>
+
+</body>
+</html>
